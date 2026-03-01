@@ -16,7 +16,6 @@ public class Robot {
     private final int height = 20;
     private int stepSize = 40;
 
-
     public Robot(int x, int y) {
         this.x = x;
         this.y = y;
@@ -27,53 +26,18 @@ public class Robot {
         status = RobotStatus.SEARCHING;
     }
 
-    public int getSteps() {
-        return steps;
-    }
-
-    public int getBattery() {
-        return battery;
-    }
-
-    public RobotStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(RobotStatus status) {
-        this.status = status;
-    }
-
-    public int getOldX() {
-        return oldX;
-    }
-
-    public void setOldX(int x) {
-        oldX = x;
-    }
-
-    public int getOldY() {
-        return oldY;
-    }
-
-    public void setOldY(int y) {
-        oldY = y;
-    }
-
-    public int getX() {
-        return x;
-    }
-
-    public int getY() {
-        return y;
-    }
-
-    public int getWidth() {
-        return width;
-    }
-
-    public int getHeight() {
-        return height;
-    }
+    public int getSteps() { return steps; }
+    public int getBattery() { return battery; }
+    public RobotStatus getStatus() { return status; }
+    public void setStatus(RobotStatus status) { this.status = status; }
+    public int getOldX() { return oldX; }
+    public void setOldX(int x) { oldX = x; }
+    public int getOldY() { return oldY; }
+    public void setOldY(int y) { oldY = y; }
+    public int getX() { return x; }
+    public int getY() { return y; }
+    public int getWidth() { return width; }
+    public int getHeight() { return height; }
 
     public void setOldPosition() {
         this.oldX = this.x;
@@ -81,22 +45,23 @@ public class Robot {
     }
 
     public void checkCollision(Arena arenaBounds) {
+        int halfWidth = width / 2;
+        int halfHeight = height / 2;
 
-
-        if (this.x <= arenaBounds.getLeftEdge()) {
-            this.x = arenaBounds.getLeftEdge();
+        if (this.x - halfWidth <= arenaBounds.getLeftEdge()) {
+            this.x = arenaBounds.getLeftEdge() + halfWidth;
         }
 
-        if (this.x + width >= arenaBounds.getRightEdge()) {
-            this.x = arenaBounds.getRightEdge() - width;
+        if (this.x + halfWidth >= arenaBounds.getRightEdge()) {
+            this.x = arenaBounds.getRightEdge() - halfWidth;
         }
 
-        if (this.y <= arenaBounds.getTopEdge()) {
-            this.y = arenaBounds.getTopEdge();
+        if (this.y - halfHeight <= arenaBounds.getTopEdge()) {
+            this.y = arenaBounds.getTopEdge() + halfHeight;
         }
 
-        if (this.y + height >= arenaBounds.getBottomEdge()) {
-            this.y = arenaBounds.getBottomEdge() - height;
+        if (this.y + halfHeight >= arenaBounds.getBottomEdge()) {
+            this.y = arenaBounds.getBottomEdge() - halfHeight;
         }
     }
 
@@ -112,11 +77,10 @@ public class Robot {
             return;
         }
 
-        int dx = random.nextInt(stepSize*2 + 1) - stepSize;
-        int dy = random.nextInt(stepSize*2 + 1) - stepSize;
+        int dx = random.nextInt(stepSize * 2 + 1) - stepSize;
+        int dy = random.nextInt(stepSize * 2 + 1) - stepSize;
 
         this.x += dx;
         this.y += dy;
-
     }
 }

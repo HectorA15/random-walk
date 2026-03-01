@@ -14,21 +14,22 @@ public class Button {
     }
 
     public boolean isClicked(Robot robot) {
-        return robot.getX() >= x && robot.getX() <= x + width &&
-               robot.getY() >= y && robot.getY() <= y + height;
+        double robotLeft = robot.getX() - (robot.getWidth() / 2.0);
+        double robotRight = robot.getX() + (robot.getWidth() / 2.0);
+        double robotTop = robot.getY() - (robot.getHeight() / 2.0);
+        double robotBottom = robot.getY() + (robot.getHeight() / 2.0);
+
+        double buttonRight = x + width;
+        double buttonBottom = y + height;
+
+        return robotLeft < buttonRight &&
+                robotRight > x &&
+                robotTop < buttonBottom &&
+                robotBottom > y;
     }
 
-
-    public int getX() {
-        return x;
-    }
-    public int getY() {
-        return y;
-    }
-    public int getWidth() {
-        return width;
-    }
-    public int getHeight() {
-        return height;
-    }
+    public int getX() { return x; }
+    public int getY() { return y; }
+    public int getWidth() { return width; }
+    public int getHeight() { return height; }
 }

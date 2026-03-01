@@ -2,19 +2,18 @@ package org.example;
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import java.util.List;
-
 
 public class Main extends Application {
 
@@ -25,8 +24,7 @@ public class Main extends Application {
 
     private final int width = arena.getWidth();
     private final int height = arena.getHeight();
-    private static final long MOVE_INTERVAL = 500; // 500 milisegundos
-    private static final long FRAME_TIME = 16; // ~60 FPS en milisegundos
+    private static final long FRAME_TIME = 16;
     Text probability;
 
     private long lastFrameTime = 0;
@@ -36,35 +34,49 @@ public class Main extends Application {
         gc = canvas.getGraphicsContext2D();
 
         BorderPane borderPane = new BorderPane();
-
         StackPane game = new StackPane(canvas);
 
+        game.setStyle("-fx-background-color: black;");
+
+        game.widthProperty().addListener((obs, oldVal, newVal) -> {
+            double scaleX = newVal.doubleValue() / width;
+            double scaleY = game.getHeight() / height;
+            double scale = Math.min(scaleX, scaleY);
+            canvas.setScaleX(scale);
+            canvas.setScaleY(scale);
+        });
+
+        game.heightProperty().addListener((obs, oldVal, newVal) -> {
+            double scaleX = game.getWidth() / width;
+            double scaleY = newVal.doubleValue() / height;
+            double scale = Math.min(scaleX, scaleY);
+            canvas.setScaleX(scale);
+            canvas.setScaleY(scale);
+        });
+
         HBox hBox = new HBox(10);
-        probability = new Text("Success: " + gameCore.successProbability() + "%");
+        hBox.setAlignment(Pos.TOP_CENTER);
+        probability = new Text("Attempts: 0 | Success: 0 | Probability: 0.00%");
         probability.setFill(Color.WHITE);
-        HBox.setHgrow(probability, Priority.ALWAYS);
-        hBox.setStyle("-fx-padding: 10; -fx-background-color: #171717;");
+        hBox.setStyle("-fx-padding: 10; -fx-background-color: black;");
         hBox.getChildren().add(probability);
 
         borderPane.setTop(hBox);
         borderPane.setCenter(game);
 
-        Scene scene = new Scene(borderPane, 800, 600);
-        primaryStage.setTitle("JavaFX Canvas");
+        Scene scene = new Scene(borderPane);
+        primaryStage.setTitle("Simulación Montecarlo");
         primaryStage.setScene(scene);
-        primaryStage.show();
         primaryStage.sizeToScene();
+        primaryStage.setResizable(true);
+        primaryStage.show();
+
 
         startGameLoop();
-
-
-
     }
 
     private void startGameLoop() {
         AnimationTimer gameLoop = new AnimationTimer() {
-            private long moveTimer = 0;
-
             @Override
             public void handle(long now) {
                 if (lastFrameTime == 0) {
@@ -74,15 +86,14 @@ public class Main extends Application {
 
                 long elapsed = (now - lastFrameTime) / 1_000_000;
                 if (elapsed >= FRAME_TIME) {
-                    moveTimer += elapsed;
+                    gameCore.update(elapsed);
 
-                    // Actualizar posición cada MOVE_INTERVAL
-                    if (moveTimer >= MOVE_INTERVAL) {
-                        gameCore.update(elapsed);
-                        moveTimer = 0;
-                    }
+                    probability.setText(String.format("Attempts: %d | Success: %d | Probability: %.2f%%",
+                            gameCore.getAttempts(),
+                            gameCore.getSuccess(),
+                            gameCore.successProbability()));
+                    probability.setStyle( "-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #ffffff;");
 
-                    probability.setText("Success: " + gameCore.successProbability() + "%");
                     render(gc);
                     lastFrameTime = now;
                 }
@@ -94,13 +105,16 @@ public class Main extends Application {
     public void render(GraphicsContext gc) {
         gc.clearRect(0, 0, width, height);
 
-        // Background
-        gc.setFill(Color.rgb(26, 26, 28));
+        gc.setFill(Color.BLACK);
         gc.fillRect(0, 0, width, height);
 
-        // Trajectory
+        int marginThick = 2;
+        gc.setStroke(Color.WHITE);
+        gc.setLineWidth(marginThick);
+        gc.strokeRect(marginThick / 2.0, marginThick / 2.0, width - marginThick, height - marginThick);
+
         List<Point> trajectory = gameCore.getTrajectory();
-        gc.setStroke(Color.color(1.0, 1.0, 0.0, 0.2)); // R, G, B, Alpha (0.0-1.0)
+        gc.setStroke(Color.color(1.0, 1.0, 0.0, 0.4));
         gc.setLineWidth(2);
 
         for (int i = 0; i < trajectory.size() - 1; i++) {
@@ -109,14 +123,14 @@ public class Main extends Application {
             gc.strokeLine(p1.getX(), p1.getY(), p2.getX(), p2.getY());
         }
 
-        // Robot
-        Robot robot = gameCore.getRobot();
-        gc.setFill(Color.CYAN);
-        gc.fillRect(robot.getX(), robot.getY(), robot.getWidth(), robot.getHeight());
-
-        // Button
         button = gameCore.getButton();
         gc.setFill(Color.RED);
         gc.fillRect(button.getX(), button.getY(), button.getWidth(), button.getHeight());
+
+        Robot robot = gameCore.getRobot();
+        gc.setFill(Color.CYAN);
+        double renderX = robot.getX() - (robot.getWidth() / 2.0);
+        double renderY = robot.getY() - (robot.getHeight() / 2.0);
+        gc.fillRect(renderX, renderY, robot.getWidth(), robot.getHeight());
     }
 }

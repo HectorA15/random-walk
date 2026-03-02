@@ -1,4 +1,4 @@
-package org.example;
+package org.example.entity;
 
 public class Point {
     private final double x;

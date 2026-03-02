@@ -1,4 +1,10 @@
-package org.example;
+package org.example.core;
+
+import org.example.entity.Point;
+import org.example.enums.RobotStatus;
+import org.example.entity.Arena;
+import org.example.entity.Button;
+import org.example.entity.Robot;
 
 import java.util.ArrayList;
 import java.util.List;

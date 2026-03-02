@@ -1,4 +1,4 @@
-package org.example;
+package org.example.gui;
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
@@ -12,6 +12,11 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import org.example.entity.Point;
+import org.example.core.GameCore;
+import org.example.entity.Arena;
+import org.example.entity.Button;
+import org.example.entity.Robot;
 
 import java.util.List;
 

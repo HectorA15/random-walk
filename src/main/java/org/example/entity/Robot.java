@@ -1,4 +1,6 @@
-package org.example;
+package org.example.entity;
+
+import org.example.enums.RobotStatus;
 
 import java.util.Random;
 

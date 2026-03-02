@@ -63,10 +63,10 @@ public class Main extends Application {
         hBox.setAlignment(Pos.CENTER);
 
         Button btnRemove10 = new Button("-10 Robots");
-        Button btnAdd10 = new javafx.scene.control.Button("+10 Robots");
-        Button btnRemove100 = new javafx.scene.control.Button("-100 Robots");
-        Button btnAdd100 = new javafx.scene.control.Button("+100 Robots");
-        Button clear = new javafx.scene.control.Button("Clear");
+        Button btnAdd10 = new Button("+10 Robots");
+        Button btnRemove100 = new Button("-100 Robots");
+        Button btnAdd100 = new Button("+100 Robots");
+        Button clear = new Button("Clear");
 
 
         btnRemove10.setOnAction(e -> gameCore.removeRobots(10));

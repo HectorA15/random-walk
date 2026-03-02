@@ -54,23 +54,33 @@ public class Main extends Application {
             canvas.setScaleY(scale);
         });
 
-        HBox hBox = new HBox(10);
-        hBox.setAlignment(Pos.TOP_CENTER);
-        probability = new Text("Attempts: 0 | Success: 0 | Probability: 0.00%");
+        HBox hBox = new HBox(15);
+        hBox.setAlignment(Pos.CENTER);
+
+        javafx.scene.control.Button btnRemove = new javafx.scene.control.Button("-10 Robots");
+        javafx.scene.control.Button btnAdd = new javafx.scene.control.Button("+10 Robots");
+
+        btnRemove.setOnAction(e -> gameCore.removeRobots(10));
+        btnAdd.setOnAction(e -> gameCore.addRobots(10));
+
+        probability = new Text("Robots: 1 | Attempts: 0 | Success: 0 | Probability: 0.00%");
         probability.setFill(Color.WHITE);
+        probability.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
+
+
         hBox.setStyle("-fx-padding: 10; -fx-background-color: black;");
-        hBox.getChildren().add(probability);
+        hBox.getChildren().addAll(btnRemove, probability, btnAdd);
 
         borderPane.setTop(hBox);
         borderPane.setCenter(game);
 
         Scene scene = new Scene(borderPane);
-        primaryStage.setTitle("Simulación Montecarlo");
+        scene.getStylesheets().add(getClass().getResource("/Style.css").toExternalForm());
+        primaryStage.setTitle("RamdomWalk");
         primaryStage.setScene(scene);
         primaryStage.sizeToScene();
         primaryStage.setResizable(true);
         primaryStage.show();
-
 
         startGameLoop();
     }
@@ -88,11 +98,11 @@ public class Main extends Application {
                 if (elapsed >= FRAME_TIME) {
                     gameCore.update(elapsed);
 
-                    probability.setText(String.format("Attempts: %d | Success: %d | Probability: %.2f%%",
+                    probability.setText(String.format("Robots: %d | Attempts: %d | Success: %d | Probability: %.2f%%",
+                            gameCore.getRobots().size(),
                             gameCore.getAttempts(),
                             gameCore.getSuccess(),
                             gameCore.successProbability()));
-                    probability.setStyle( "-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #ffffff;");
 
                     render(gc);
                     lastFrameTime = now;
@@ -113,24 +123,28 @@ public class Main extends Application {
         gc.setLineWidth(marginThick);
         gc.strokeRect(marginThick / 2.0, marginThick / 2.0, width - marginThick, height - marginThick);
 
-        List<Point> trajectory = gameCore.getTrajectory();
-        gc.setStroke(Color.color(1.0, 1.0, 0.0, 0.4));
+        List<List<Point>> allTrajectories = gameCore.getTrajectories();
+        gc.setStroke(Color.color(1.0, 1.0, 0.0, 0.2));
         gc.setLineWidth(2);
 
-        for (int i = 0; i < trajectory.size() - 1; i++) {
-            Point p1 = trajectory.get(i);
-            Point p2 = trajectory.get(i + 1);
-            gc.strokeLine(p1.getX(), p1.getY(), p2.getX(), p2.getY());
+        for (List<Point> trajectory : allTrajectories) {
+            for (int i = 0; i < trajectory.size() - 1; i++) {
+                Point p1 = trajectory.get(i);
+                Point p2 = trajectory.get(i + 1);
+                gc.strokeLine(p1.getX(), p1.getY(), p2.getX(), p2.getY());
+            }
         }
 
         button = gameCore.getButton();
         gc.setFill(Color.RED);
         gc.fillRect(button.getX(), button.getY(), button.getWidth(), button.getHeight());
 
-        Robot robot = gameCore.getRobot();
+        List<Robot> robots = gameCore.getRobots();
         gc.setFill(Color.CYAN);
-        double renderX = robot.getX() - (robot.getWidth() / 2.0);
-        double renderY = robot.getY() - (robot.getHeight() / 2.0);
-        gc.fillRect(renderX, renderY, robot.getWidth(), robot.getHeight());
+        for (Robot robot : robots) {
+            double renderX = robot.getX() - (robot.getWidth() / 2.0);
+            double renderY = robot.getY() - (robot.getHeight() / 2.0);
+            gc.fillRect(renderX, renderY, robot.getWidth(), robot.getHeight());
+        }
     }
 }

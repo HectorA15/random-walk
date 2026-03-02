@@ -15,9 +15,9 @@ import javafx.stage.Stage;
 import org.example.entity.Point;
 import org.example.core.GameCore;
 import org.example.entity.Arena;
-import org.example.entity.Button;
+import org.example.entity.RoboButton;
 import org.example.entity.Robot;
-
+import javafx.scene.control.Button;
 import java.util.List;
 
 public class Main extends Application {
@@ -25,7 +25,7 @@ public class Main extends Application {
     GraphicsContext gc;
     GameCore gameCore = new GameCore();
     Arena arena = gameCore.getGameBounds();
-    Button button = gameCore.getButton();
+    RoboButton roboButton = gameCore.getButton();
 
     private final int width = arena.getWidth();
     private final int height = arena.getHeight();
@@ -62,11 +62,18 @@ public class Main extends Application {
         HBox hBox = new HBox(15);
         hBox.setAlignment(Pos.CENTER);
 
-        javafx.scene.control.Button btnRemove = new javafx.scene.control.Button("-10 Robots");
-        javafx.scene.control.Button btnAdd = new javafx.scene.control.Button("+10 Robots");
+        Button btnRemove10 = new Button("-10 Robots");
+        Button btnAdd10 = new javafx.scene.control.Button("+10 Robots");
+        Button btnRemove100 = new javafx.scene.control.Button("-100 Robots");
+        Button btnAdd100 = new javafx.scene.control.Button("+100 Robots");
+        Button clear = new javafx.scene.control.Button("Clear");
 
-        btnRemove.setOnAction(e -> gameCore.removeRobots(10));
-        btnAdd.setOnAction(e -> gameCore.addRobots(10));
+
+        btnRemove10.setOnAction(e -> gameCore.removeRobots(10));
+        btnAdd10.setOnAction(e -> gameCore.addRobots(10));
+        btnRemove100.setOnAction(e -> gameCore.removeRobots(100));
+        btnAdd100.setOnAction(e -> gameCore.addRobots(100));
+        clear.setOnAction(e -> gameCore.removeRobots(gameCore.getRobots().size()));
 
         probability = new Text("Robots: 1 | Attempts: 0 | Success: 0 | Probability: 0.00%");
         probability.setFill(Color.WHITE);
@@ -74,7 +81,7 @@ public class Main extends Application {
 
 
         hBox.setStyle("-fx-padding: 10; -fx-background-color: black;");
-        hBox.getChildren().addAll(btnRemove, probability, btnAdd);
+        hBox.getChildren().addAll(clear, btnRemove10, btnRemove100, probability, btnAdd100, btnAdd10);
 
         borderPane.setTop(hBox);
         borderPane.setCenter(game);
@@ -140,9 +147,9 @@ public class Main extends Application {
             }
         }
 
-        button = gameCore.getButton();
+        roboButton = gameCore.getButton();
         gc.setFill(Color.RED);
-        gc.fillRect(button.getX(), button.getY(), button.getWidth(), button.getHeight());
+        gc.fillRect(roboButton.getX(), roboButton.getY(), roboButton.getWidth(), roboButton.getHeight());
 
         List<Robot> robots = gameCore.getRobots();
         gc.setFill(Color.CYAN);

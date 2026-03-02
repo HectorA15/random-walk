@@ -3,7 +3,7 @@ package org.example.core;
 import org.example.entity.Point;
 import org.example.enums.RobotStatus;
 import org.example.entity.Arena;
-import org.example.entity.Button;
+import org.example.entity.RoboButton;
 import org.example.entity.Robot;
 
 import java.util.ArrayList;
@@ -14,7 +14,7 @@ public class GameCore {
     private static final long MOVE_INTERVAL = 1;
 
     Arena gameBounds;
-    Button button;
+    RoboButton roboButton;
     private long moveTimer = 0;
 
     private final List<Robot> robots = new ArrayList<>();
@@ -29,7 +29,7 @@ public class GameCore {
         this.gameBounds = new Arena(0, 0, 1280, 720);
         this.centerX = gameBounds.getWidth() / 2;
         this.centerY = gameBounds.getHeight() / 2;
-        this.button = new Button(centerX + 200, centerY, 75, 75);
+        this.roboButton = new RoboButton(centerX + 200, centerY, 75, 75);
         addRobots(1);
     }
 
@@ -71,7 +71,7 @@ public class GameCore {
 
                         trajectories.get(i).add(new Point(robot.getX(), robot.getY()));
 
-                        if (button.isClicked(robot)) {
+                        if (roboButton.isClicked(robot)) {
                             robot.setStatus(RobotStatus.SUCCESS);
                             success++;
                         }
@@ -99,7 +99,7 @@ public class GameCore {
     public Robot getRobot() { return robots.isEmpty() ? null : robots.get(0); }
     public List<Robot> getRobots() { return robots; }
     public Arena getGameBounds() { return gameBounds; }
-    public Button getButton() { return button; }
+    public RoboButton getButton() { return roboButton; }
     public List<List<Point>> getTrajectories() { return trajectories; }
 
     public double successProbability() {
